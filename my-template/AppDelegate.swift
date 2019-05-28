@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Then
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,7 +16,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+
+        Prefetcher.initialPreFetch()
+        AnalysisManager.configure()
+
+        window = UIWindow(frame: DeviceSize.screenBounds)
+        window?.makeKeyAndVisible()
+
+        window?.rootViewController = UINavigationController(rootViewController: HomeViewController().then {
+            $0.reactor = HomeViewReactor()
+        }).then {
+            $0.interactivePopGestureRecognizer?.delegate = nil
+            $0.setNavigationBarHidden(true, animated: false)
+        }
+
         return true
     }
 
@@ -43,4 +57,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
-
